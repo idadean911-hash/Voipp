@@ -1,1 +1,765 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kixie PowerCall Web App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 500px;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .status-panel {
+            background: #f8f9fa;
+            margin: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+        }
+
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .status-row:last-child {
+            border-bottom: none;
+        }
+
+        .status-label {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .status-value {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge.warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge.info {
+            background: #e7f5ff;
+            color: #1864ab;
+        }
+
+        .call-form {
+            padding: 0 20px 20px 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #495057;
+            font-size: 14px;
+        }
+
+        .form-group label i {
+            color: #667eea;
+            margin-right: 6px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 12px;
+            color: #adb5bd;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 12px 12px 40px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-control::placeholder {
+            color: #adb5bd;
+        }
+
+        .helper-text {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .btn {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .log-container {
+            margin: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .log-container h3 {
+            font-size: 14px;
+            color: #495057;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .log-entry {
+            font-size: 13px;
+            padding: 8px;
+            border-bottom: 1px solid #e9ecef;
+            color: #6c757d;
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .log-entry .timestamp {
+            color: #adb5bd;
+            font-size: 11px;
+            margin-right: 8px;
+        }
+
+        .log-entry.success { color: #28a745; }
+        .log-entry.error { color: #dc3545; }
+        .log-entry.warning { color: #ffc107; }
+
+        .indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        .indicator.connected {
+            background: #28a745;
+            animation: pulse 2s infinite;
+        }
+
+        .indicator.disconnected { background: #dc3545; }
+        .indicator.connecting { background: #ffc107; animation: blink 1s infinite; }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(40, 167, 69, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+        }
+
+        @keyframes blink {
+            0%, 50%, 100% { opacity: 1; }
+            25%, 75% { opacity: 0.5; }
+        }
+
+        .proxy-settings {
+            background: #e7f5ff;
+            border: 1px solid #339af0;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px;
+        }
+
+        .proxy-settings h4 {
+            color: #1864ab;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        audio {
+            display: none;
+        }
+    </style>
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- JsSIP for WebRTC -->
+    <script src="https://jssip.net/download/releases/jssip-3.10.0.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-phone-alt" style="margin-right: 10px;"></i>Kixie PowerCall Web App</h1>
+            <p>Works like the Chrome extension - calls ring in your browser</p>
+        </div>
+
+        <!-- Connection Status Panel -->
+        <div class="status-panel">
+            <div class="status-row">
+                <span class="status-label"><i class="fas fa-plug"></i> WebRTC Status:</span>
+                <span class="status-value">
+                    <span id="webrtcIndicator" class="indicator disconnected"></span>
+                    <span id="webrtcStatus" class="badge error">Disconnected</span>
+                </span>
+            </div>
+            <div class="status-row">
+                <span class="status-label"><i class="fas fa-server"></i> Proxy Status:</span>
+                <span class="status-value">
+                    <span id="proxyIndicator" class="indicator disconnected"></span>
+                    <span id="proxyStatus" class="badge error">Not Tested</span>
+                </span>
+            </div>
+            <div class="status-row">
+                <span class="status-label"><i class="fas fa-phone"></i> Call Status:</span>
+                <span class="status-value">
+                    <span id="callStatus" class="badge info">Ready</span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Proxy Configuration -->
+        <div class="proxy-settings">
+            <h4><i class="fas fa-server"></i> Proxy Server Settings</h4>
+            <div class="form-group">
+                <label for="proxyUrl">
+                    <i class="fas fa-link"></i>
+                    Proxy URL
+                </label>
+                <div class="input-wrapper">
+                    <i class="fas fa-globe input-icon"></i>
+                    <input type="text" id="proxyUrl" class="form-control" 
+                           placeholder="http://localhost:3001/api/make-call" 
+                           value="http://localhost:3001/api/make-call">
+                </div>
+                <div class="helper-text">
+                    <i class="fas fa-info-circle"></i> Your proxy server endpoint
+                </div>
+            </div>
+            <button class="btn btn-secondary" onclick="testProxyConnection()" style="width: 100%;">
+                <i class="fas fa-vial"></i> Test Proxy Connection
+            </button>
+        </div>
+
+        <!-- SIP Credentials (from your screenshot) -->
+        <div class="proxy-settings" style="background: #e8f5e9; border-color: #4caf50;">
+            <h4><i class="fas fa-key"></i> SIP Credentials</h4>
+            <div class="form-group">
+                <label>SIP Username:</label>
+                <code style="display: block; padding: 8px; background: #f1f8e9; border-radius: 5px;">kixie8LKUXymkj1pSTwbD0JP250990788970233662</code>
+            </div>
+            <div class="form-group">
+                <label>SIP Password:</label>
+                <code style="display: block; padding: 8px; background: #f1f8e9; border-radius: 5px;">4Kwzb5BZohIvLaTD8P</code>
+            </div>
+        </div>
+
+        <!-- Call Form -->
+        <div class="call-form">
+            <div class="form-group">
+                <label for="targetNumber">
+                    <i class="fas fa-bullseye"></i>
+                    Number to Call
+                </label>
+                <div class="input-wrapper">
+                    <i class="fas fa-phone-alt input-icon"></i>
+                    <input type="tel" id="targetNumber" class="form-control" 
+                           placeholder="+15084700474" 
+                           value="+15084700474">
+                </div>
+                <div class="helper-text">
+                    <i class="fas fa-info-circle"></i> E.164 format: +1 followed by number
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="callerId">
+                    <i class="fas fa-id-card"></i>
+                    Caller ID (Optional)
+                </label>
+                <div class="input-wrapper">
+                    <i class="fas fa-phone input-icon"></i>
+                    <input type="tel" id="callerId" class="form-control" 
+                           placeholder="+15084700474" 
+                           value="+15084700474">
+                </div>
+            </div>
+
+            <!-- Call Control Buttons -->
+            <div class="button-group">
+                <button id="callBtn" class="btn btn-primary" onclick="makeCall()" disabled>
+                    <i class="fas fa-phone"></i>
+                    Call Now
+                </button>
+                <button id="hangupBtn" class="btn btn-secondary" onclick="hangup()" disabled>
+                    <i class="fas fa-phone-slash"></i>
+                    Hang Up
+                </button>
+            </div>
+        </div>
+
+        <!-- Log Container -->
+        <div class="log-container">
+            <h3><i class="fas fa-history"></i> Activity Log</h3>
+            <div id="logEntries">
+                <div class="log-entry">
+                    <span class="timestamp">System:</span> Initializing PowerCall Web App...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden audio element for WebRTC -->
+    <audio id="remoteAudio" autoplay></audio>
+
+    <script>
+        // ============================================
+        // CONFIGURATION
+        // ============================================
+        const SIP_CONFIG = {
+            username: 'kixie8LKUXymkj1pSTwbD0JP250990788970233662',
+            password: '4Kwzb5BZohIvLaTD8P',
+            server: 'phone.plivo.com',
+            port: 443  // Using port 443 for better compatibility
+        };
+
+        const API_CONFIG = {
+            apiKey: '5320c2ac4a1d28fadbdf8c03534a891d',
+            businessId: '15065',
+            email: 'acceptedcoffee@dollicons.com'
+        };
+
+        // ============================================
+        // STATE MANAGEMENT
+        // ============================================
+        let phone = null;
+        let currentSession = null;
+        let webrtcConnected = false;
+        let proxyReachable = false;
+
+        // DOM Elements
+        const webrtcIndicator = document.getElementById('webrtcIndicator');
+        const webrtcStatus = document.getElementById('webrtcStatus');
+        const proxyIndicator = document.getElementById('proxyIndicator');
+        const proxyStatus = document.getElementById('proxyStatus');
+        const callStatus = document.getElementById('callStatus');
+        const callBtn = document.getElementById('callBtn');
+        const hangupBtn = document.getElementById('hangupBtn');
+        const logEntries = document.getElementById('logEntries');
+        const proxyUrlInput = document.getElementById('proxyUrl');
+        const targetNumberInput = document.getElementById('targetNumber');
+        const callerIdInput = document.getElementById('callerId');
+
+        // ============================================
+        // UTILITY FUNCTIONS
+        // ============================================
+        function addLogEntry(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
+            logEntry.innerHTML = `<span class="timestamp">${timestamp}:</span> ${message}`;
+            logEntries.appendChild(logEntry);
+            logEntries.scrollTop = logEntries.scrollHeight;
+            console.log(`[${type}] ${message}`);
+        }
+
+        function updateWebRTCStatus(status, connected) {
+            webrtcConnected = connected;
+            webrtcStatus.textContent = status;
+            webrtcStatus.className = `badge ${connected ? 'success' : 'error'}`;
+            webrtcIndicator.className = `indicator ${connected ? 'connected' : 'disconnected'}`;
+            
+            // Enable call button only if both WebRTC and proxy are ready
+            callBtn.disabled = !(webrtcConnected && proxyReachable);
+        }
+
+        function updateProxyStatus(status, reachable) {
+            proxyReachable = reachable;
+            proxyStatus.textContent = status;
+            proxyStatus.className = `badge ${reachable ? 'success' : 'error'}`;
+            proxyIndicator.className = `indicator ${reachable ? 'connected' : 'disconnected'}`;
+            
+            // Enable call button only if both WebRTC and proxy are ready
+            callBtn.disabled = !(webrtcConnected && proxyReachable);
+        }
+
+        function updateCallStatus(status, type = 'info') {
+            callStatus.textContent = status;
+            callStatus.className = `badge ${type}`;
+        }
+
+        function validatePhoneNumber(number) {
+            const e164Regex = /^\+[1-9]\d{1,14}$/;
+            return e164Regex.test(number);
+        }
+
+        // ============================================
+        // PROXY FUNCTIONS
+        // ============================================
+        async function testProxyConnection() {
+            const proxyUrl = proxyUrlInput.value.trim();
+            
+            if (!proxyUrl) {
+                addLogEntry('❌ Please enter proxy URL', 'error');
+                return;
+            }
+
+            addLogEntry(`🧪 Testing proxy connection to ${proxyUrl}...`, 'info');
+            updateProxyStatus('Testing...', false);
+
+            try {
+                const response = await fetch(proxyUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ test: true })
+                });
+
+                if (response.ok) {
+                    addLogEntry('✅ Proxy server is reachable!', 'success');
+                    updateProxyStatus('Connected', true);
+                } else {
+                    const text = await response.text();
+                    addLogEntry(`⚠️ Proxy responded with status ${response.status}`, 'warning');
+                    updateProxyStatus('Error', false);
+                }
+            } catch (error) {
+                addLogEntry(`❌ Cannot reach proxy: ${error.message}`, 'error');
+                updateProxyStatus('Unreachable', false);
+            }
+        }
+
+        // ============================================
+        // WEBRTC FUNCTIONS
+        // ============================================
+        function initializeWebRTC() {
+            try {
+                addLogEntry('🔄 Initializing WebRTC softphone...', 'info');
+                updateWebRTCStatus('Connecting...', false);
+
+                // Create WebSocket connection
+                const wsUrl = `wss://${SIP_CONFIG.server}:${SIP_CONFIG.port}`;
+                addLogEntry(`📡 Connecting to ${wsUrl}`, 'info');
+
+                const socket = new JsSIP.WebSocketInterface(wsUrl);
+                
+                const configuration = {
+                    sockets: [socket],
+                    uri: `sip:${SIP_CONFIG.username}@${SIP_CONFIG.server}`,
+                    password: SIP_CONFIG.password,
+                    display_name: 'PowerCall Web App',
+                    register: true,
+                    register_expires: 600,
+                    connection_recovery_min_interval: 2,
+                    connection_recovery_max_interval: 30,
+                    session_timers: false
+                };
+
+                phone = new JsSIP.UA(configuration);
+
+                // Event Handlers
+                phone.on('connecting', () => {
+                    addLogEntry('🔄 WebSocket connecting...', 'info');
+                });
+
+                phone.on('connected', () => {
+                    addLogEntry('✅ WebSocket connected', 'success');
+                });
+
+                phone.on('disconnected', () => {
+                    addLogEntry('❌ WebSocket disconnected', 'error');
+                    updateWebRTCStatus('Disconnected', false);
+                    currentSession = null;
+                });
+
+                phone.on('registered', () => {
+                    addLogEntry('✅ Softphone registered and ready!', 'success');
+                    updateWebRTCStatus('Ready', true);
+                });
+
+                phone.on('unregistered', () => {
+                    addLogEntry('Softphone unregistered', 'info');
+                    updateWebRTCStatus('Unregistered', false);
+                });
+
+                phone.on('registrationFailed', (data) => {
+                    addLogEntry(`❌ Registration failed: ${data.cause}`, 'error');
+                    updateWebRTCStatus('Failed', false);
+                });
+
+                phone.on('newRTCSession', (data) => {
+                    currentSession = data.session;
+                    addLogEntry('📞 Incoming call session created', 'info');
+                    updateCallStatus('Incoming Call...', 'warning');
+                    
+                    currentSession.on('progress', () => {
+                        addLogEntry('📞 Call ringing...', 'info');
+                        updateCallStatus('Ringing', 'warning');
+                        hangupBtn.disabled = false;
+                    });
+
+                    currentSession.on('confirmed', () => {
+                        addLogEntry('✅ Call connected!', 'success');
+                        updateCallStatus('Connected', 'success');
+                        hangupBtn.disabled = false;
+                        callBtn.disabled = true;
+                    });
+
+                    currentSession.on('ended', (e) => {
+                        addLogEntry(`📞 Call ended: ${e.cause || 'Normal'}`, 'info');
+                        updateCallStatus('Ready', 'info');
+                        hangupBtn.disabled = true;
+                        callBtn.disabled = !(webrtcConnected && proxyReachable);
+                        currentSession = null;
+                    });
+
+                    currentSession.on('failed', (e) => {
+                        addLogEntry(`❌ Call failed: ${e.cause || 'Unknown'}`, 'error');
+                        updateCallStatus('Failed', 'error');
+                        hangupBtn.disabled = true;
+                        callBtn.disabled = !(webrtcConnected && proxyReachable);
+                        currentSession = null;
+                    });
+                });
+
+                phone.start();
+                addLogEntry('🚀 Softphone started', 'success');
+
+            } catch (error) {
+                addLogEntry(`❌ WebRTC error: ${error.message}`, 'error');
+                updateWebRTCStatus('Error', false);
+            }
+        }
+
+        // ============================================
+        // CALL FUNCTIONS
+        // ============================================
+        async function makeCall() {
+            const targetNumber = targetNumberInput.value.trim();
+            const callerId = callerIdInput.value.trim() || targetNumber;
+            const proxyUrl = proxyUrlInput.value.trim();
+
+            // Validate
+            if (!targetNumber) {
+                addLogEntry('❌ Please enter a target number', 'error');
+                return;
+            }
+
+            if (!validatePhoneNumber(targetNumber)) {
+                addLogEntry('❌ Phone must be in E.164 format (e.g., +15084700474)', 'error');
+                alert('Please use E.164 format: +1 followed by number');
+                return;
+            }
+
+            if (!webrtcConnected) {
+                addLogEntry('❌ Softphone not ready', 'error');
+                alert('Please wait for softphone to connect');
+                return;
+            }
+
+            if (!proxyReachable) {
+                addLogEntry('❌ Proxy not reachable', 'error');
+                alert('Please test proxy connection first');
+                return;
+            }
+
+            try {
+                callBtn.disabled = true;
+                updateCallStatus('Initiating...', 'warning');
+                addLogEntry(`📞 Initiating call to ${targetNumber}...`, 'info');
+
+                // Make API call through proxy
+                const response = await fetch(proxyUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        apiKey: API_CONFIG.apiKey,
+                        businessId: API_CONFIG.businessId,
+                        email: API_CONFIG.email,
+                        target: targetNumber,
+                        displayName: 'PowerCall Web App'
+                    })
+                });
+
+                const responseText = await response.text();
+                
+                if (response.ok) {
+                    addLogEntry('✅ Call API successful - your phone will ring', 'success');
+                    // Call will ring through WebRTC session
+                } else {
+                    addLogEntry(`❌ API error: ${response.status} - ${responseText}`, 'error');
+                    updateCallStatus('API Failed', 'error');
+                    callBtn.disabled = !(webrtcConnected && proxyReachable);
+                }
+
+            } catch (error) {
+                addLogEntry(`❌ Network error: ${error.message}`, 'error');
+                updateCallStatus('Error', 'error');
+                callBtn.disabled = !(webrtcConnected && proxyReachable);
+            }
+        }
+
+        function hangup() {
+            if (currentSession) {
+                addLogEntry('🛑 Hanging up call...', 'info');
+                currentSession.terminate();
+                hangupBtn.disabled = true;
+            }
+        }
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        window.onload = function() {
+            addLogEntry('🚀 PowerCall Web App starting...', 'info');
+            
+            // Check if JsSIP loaded
+            if (typeof JsSIP === 'undefined') {
+                addLogEntry('❌ JsSIP library failed to load', 'error');
+                return;
+            }
+            
+            addLogEntry('✅ JsSIP loaded', 'success');
+            
+            // Initialize WebRTC
+            setTimeout(() => {
+                initializeWebRTC();
+            }, 1000);
+            
+            // Auto-test proxy after 2 seconds
+            setTimeout(() => {
+                testProxyConnection();
+            }, 2000);
+        };
+
+        window.onunload = function() {
+            if (phone) {
+                phone.stop();
+            }
+        };
+
+        // Export functions
+        window.testProxyConnection = testProxyConnection;
+        window.makeCall = makeCall;
+        window.hangup = hangup;
+    </script>
+</body>
+</html>
